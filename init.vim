@@ -1,3 +1,4 @@
+set nocompatible 
 set mouse=a
 set clipboard=unnamedplus
 set number
@@ -12,41 +13,50 @@ set guifont=DroidSansMono\ Nerd\ Font\ 11
 set splitright
 set splitbelow
 
-call plug#begin("~/.vim/plugged") 
-  Plug 'tomasiser/vim-code-dark'
-  Plug 'rakr/vim-one'
+call plug#begin("~/.local/share/nvim/plugged") 
+ " Vim One theme
+ Plug 'rakr/vim-one'
 
-  Plug 'psliwka/vim-smoothie'
+ " File Explorer with Icons
+ Plug 'scrooloose/nerdtree'
+ Plug 'ryanoasis/vim-devicons'
 
-  Plug 'ojroques/nvim-bufdel'
+ " Project management and screen startup
+ Plug 'mhinz/vim-startify'
 
-  Plug 'tpope/vim-fugitive'
-  Plug 'airblade/vim-gitgutter'
+ " Buffer delete perserve layout
+ Plug 'ojroques/nvim-bufdel'
 
-  " Language Client
-  Plug 'neoclide/coc.nvim', {'branch': 'release'}
-  let g:coc_global_extensions = ['coc-emmet', 'coc-css', 'coc-html', 'coc-lit-html','coc-json', 'coc-prettier', 'coc-tsserver']
-  " TypeScript Highlighting
-  Plug 'leafgarland/typescript-vim'
-  Plug 'peitalin/vim-jsx-typescript'
+ " File Search
+ Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+ Plug 'junegunn/fzf.vim'
 
-  " Lit html Highlighting
-  Plug 'jonsmithers/vim-html-template-literals'
-  Plug 'pangloss/vim-javascript'
+ " Status bar
+ Plug 'vim-airline/vim-airline'
+ Plug 'vim-airline/vim-airline-themes'
 
-  " File Explorer with Icons
-  Plug 'scrooloose/nerdtree'
-  Plug 'ryanoasis/vim-devicons'
- 
-  Plug 'mhinz/vim-startify'
+ " Git Client
+ Plug 'tpope/vim-fugitive'
+ Plug 'airblade/vim-gitgutter'
 
-  " File Search
-  Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
-  Plug 'junegunn/fzf.vim'
+ " Language Client
+ Plug 'neoclide/coc.nvim', {'branch': 'release'}
+ let g:coc_global_extensions = ['coc-emmet', 'coc-css', 'coc-html', 'coc-lit-html','coc-json', 'coc-prettier', 'coc-tsserver']
+ " TypeScript Highlighting
+ Plug 'leafgarland/typescript-vim'
+ Plug 'peitalin/vim-jsx-typescript'
 
-  Plug 'vim-airline/vim-airline'
-  Plug 'vim-airline/vim-airline-themes'
+ Plug 'jiangmiao/auto-pairs'
+ Plug 'alvan/vim-closetag'
+
+ Plug 'kkoomen/vim-doge', { 'do': { -> doge#install() } }
+
+ " Lit html Highlighting
+ Plug 'jonsmithers/vim-html-template-literals'
+ Plug 'pangloss/vim-javascript'
+
 call plug#end()
+
 
 "Credit joshdick
 "Use 24-bit (true-color) mode in Vim/Neovim when outside tmux.
@@ -65,8 +75,6 @@ if (empty($TMUX))
   endif
 endif
 
-
-
 colorscheme one
 set background=dark " for the dark version
 " set background=light " for the light version
@@ -77,7 +85,7 @@ let g:NERDTreeIgnore = []
 let g:NERDTreeStatusline = ''
 
 let g:airline_theme='one'
-let g:airline_powerline_fonts = 1"
+" air-line
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#formatter = 'unique_tail'
 
@@ -105,7 +113,6 @@ let g:startify_session_persistence = 1
 
 " Simplify the startify list to just recent files and sessions
 let g:startify_lists = [
-  \ { 'type': 'dir',       'header': ['   Recent files'] },
   \ { 'type': 'sessions',  'header': ['   Saved sessions'] },
   \ ]
 
@@ -157,22 +164,9 @@ nnoremap <A-k> <C-w>k
 nnoremap <A-l> <C-w>l
 
 "Move between buffers
-nnoremap <C-j> :bprev<CR>
+nnoremap <C-h> :bprev<CR>
 nnoremap <C-k> :bnext<CR>
-nnoremap <C-d> :BufDel<CR>
 nnoremap <C-x> :bd<CR>
-
-" start terminal in insert mode
-au BufEnter * if &buftype == 'terminal' | :startinsert | endif
-
-" open terminal on ctrl+;
-" uses zsh instead of bash
-function! OpenTerminal()
-  split term://zsh
-  resize 10
-endfunction
-nnoremap <c-n> :call OpenTerminal()<CR>
-
 
 " Make <CR> auto-select the first completion item and notify coc.nvim to
 " format on enter, <cr> could be remapped by other vim plugin
@@ -241,6 +235,11 @@ xmap ic <Plug>(coc-classobj-i)
 omap ic <Plug>(coc-classobj-i)
 xmap ac <Plug>(coc-classobj-a)
 omap ac <Plug>(coc-classobj-a)
+
+function! s:check_back_space() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
 
 " Use tab for trigger completion with characters ahead and navigate.
 " NOTE: Use command ':verbose imap <tab>' to make sure tab is not mapped by
